@@ -1,0 +1,20 @@
+.DS_Store
+.dart_tool/
+.vscode/
+.atom/
+.vs/
+
+.packages
+.pub/
+
+build/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# In example code we only want to keep dart code
+example/**
+!example/lib**
