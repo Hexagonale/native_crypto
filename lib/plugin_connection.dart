@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 
 class PluginConnection {
-  static const MethodChannel _channel = const MethodChannel('crypto');
-  static BasicMessageChannel<Uint8List> _dataChannel = BasicMessageChannel('data', BinaryCodec())
+  static const MethodChannel _channel = const MethodChannel('native_crypto');
+  static BasicMessageChannel<Uint8List> _dataChannel = BasicMessageChannel('native_crypto_data', BinaryCodec())
     ..setMessageHandler(_onBinaryMessage);
 
   static Uint8List? _buffer;

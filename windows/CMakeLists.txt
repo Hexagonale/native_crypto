@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
-set(PROJECT_NAME "crypto")
+set(PROJECT_NAME "native_crypto")
 project(${PROJECT_NAME} LANGUAGES CXX)
 
 # This value is used when generating builds using this plugin, so it must
 # not be changed
-set(PLUGIN_NAME "crypto_plugin")
+set(PLUGIN_NAME "native_crypto_plugin")
 
-add_library(${PLUGIN_NAME} SHARED "crypto_plugin.cpp" "aes_cbc_cipher.cpp")
+add_library(${PLUGIN_NAME} SHARED "native_crypto_plugin.cpp" "aes_cbc_cipher.cpp")
 apply_standard_settings(${PLUGIN_NAME})
 set_target_properties(${PLUGIN_NAME} PROPERTIES
   CXX_VISIBILITY_PRESET hidden)
@@ -16,7 +16,7 @@ target_include_directories(${PLUGIN_NAME} INTERFACE
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
 
 # List of absolute paths to libraries that should be bundled with the plugin
-set(crypto_bundled_libraries
+set(native_crypto_bundled_libraries
   ""
   PARENT_SCOPE
 )

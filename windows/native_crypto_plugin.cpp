@@ -1,5 +1,5 @@
-#include "include/crypto/crypto_plugin.h"
-#include "include/crypto/aes_cbc_cipher.h"
+#include "include/native_crypto/native_crypto_plugin.h"
+#include "include/native_crypto/aes_cbc_cipher.h"
 
 // This must be included before many other Windows headers.
 #include <windows.h>
@@ -22,25 +22,25 @@
 
 using namespace flutter;
 
-CryptoPlugin::CryptoPlugin() {}
-CryptoPlugin::~CryptoPlugin() {
+NativeCryptoPlugin::NativeCryptoPlugin() {}
+NativeCryptoPlugin::~NativeCryptoPlugin() {
     delete this->buffer;
 }
 
-void CryptoPlugin::RegisterWithRegistrar(PluginRegistrarWindows* registrar) {
-    std::unique_ptr<CryptoPlugin> plugin = std::make_unique<CryptoPlugin>();
+void NativeCryptoPlugin::RegisterWithRegistrar(PluginRegistrarWindows* registrar) {
+    std::unique_ptr<NativeCryptoPlugin> plugin = std::make_unique<NativeCryptoPlugin>();
     plugin.get()->init(registrar);
 
     registrar->AddPlugin(std::move(plugin));
 }
 
-void CryptoPlugin::init(PluginRegistrarWindows* registrar) {
-    this->channel = new MethodChannel<EncodableValue>(registrar->messenger(), "crypto", &flutter::StandardMethodCodec::GetInstance());
+void NativeCryptoPlugin::init(PluginRegistrarWindows* registrar) {
+    this->channel = new MethodChannel<EncodableValue>(registrar->messenger(), "native_crypto", &flutter::StandardMethodCodec::GetInstance());
     this->channel->SetMethodCallHandler([&](const auto& call, auto result) {
         this->HandleMethodCall(call, std::move(result));
     });
 
-    this->binaryChannel = new BasicMessageChannel(registrar->messenger(), "data", this);
+    this->binaryChannel = new BasicMessageChannel(registrar->messenger(), "native_crypto_data", this);
     this->binaryChannel->SetMessageHandler([&](const std::vector<uint8_t>& message, const MessageReply<std::vector<uint8_t>>& reply) {
         std::vector<uint8_t>* msg = (std::vector<uint8_t>*)&message;
 
@@ -49,7 +49,7 @@ void CryptoPlugin::init(PluginRegistrarWindows* registrar) {
 }
 
 // region Messages Handlers
-void CryptoPlugin::HandleBinaryMessage(std::vector<uint8_t>* message, const MessageReply<std::vector<uint8_t>>& reply) {
+void NativeCryptoPlugin::HandleBinaryMessage(std::vector<uint8_t>* message, const MessageReply<std::vector<uint8_t>>& reply) {
     const int size = message->size();
 
     delete this->buffer;
@@ -62,7 +62,7 @@ void CryptoPlugin::HandleBinaryMessage(std::vector<uint8_t>* message, const Mess
     reply(std::vector<uint8_t>());
 }
 
-void CryptoPlugin::HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue>& method_call, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+void NativeCryptoPlugin::HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue>& method_call, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     if (method_call.method_name().compare("create") == 0) {
         const flutter::EncodableMap* arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
 
@@ -129,13 +129,13 @@ void CryptoPlugin::HandleMethodCall(const flutter::MethodCall<flutter::Encodable
 // endregion
 
 // region Message Decoder
-std::unique_ptr<std::vector<uint8_t>> CryptoPlugin::DecodeMessageInternal(const uint8_t* binary_message, const size_t message_size) const {
+std::unique_ptr<std::vector<uint8_t>> NativeCryptoPlugin::DecodeMessageInternal(const uint8_t* binary_message, const size_t message_size) const {
     std::unique_ptr<std::vector<uint8_t>> vector = std::make_unique<std::vector<uint8_t>>(binary_message, binary_message + message_size);
 
     return vector;
 }
 
-std::unique_ptr<std::vector<uint8_t>> CryptoPlugin::EncodeMessageInternal(const std::vector<uint8_t>& message) const {
+std::unique_ptr<std::vector<uint8_t>> NativeCryptoPlugin::EncodeMessageInternal(const std::vector<uint8_t>& message) const {
     std::unique_ptr<std::vector<uint8_t>> msg = std::make_unique<std::vector<uint8_t>>(message.size());
 
     for (int i = 0; i < message.size(); i++) {
@@ -147,7 +147,7 @@ std::unique_ptr<std::vector<uint8_t>> CryptoPlugin::EncodeMessageInternal(const 
 // endregion
 
 // region Registrar
-void CryptoPluginRegisterWithRegistrar(FlutterDesktopPluginRegistrarRef registrar) {
-    CryptoPlugin::RegisterWithRegistrar(flutter::PluginRegistrarManager::GetInstance()->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
+void NativeCryptoPluginRegisterWithRegistrar(FlutterDesktopPluginRegistrarRef registrar) {
+    NativeCryptoPlugin::RegisterWithRegistrar(flutter::PluginRegistrarManager::GetInstance()->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
 }
 // endregion

@@ -24,8 +24,7 @@
 extern "C" {
 #endif
 
-FLUTTER_PLUGIN_EXPORT void CryptoPluginRegisterWithRegistrar(
-    FlutterDesktopPluginRegistrarRef registrar);
+FLUTTER_PLUGIN_EXPORT void NativeCryptoPluginRegisterWithRegistrar(FlutterDesktopPluginRegistrarRef registrar);
 
 #if defined(__cplusplus)
 }  // extern "C"
@@ -33,13 +32,13 @@ FLUTTER_PLUGIN_EXPORT void CryptoPluginRegisterWithRegistrar(
 
 using namespace flutter;
 
-class CryptoPlugin : public Plugin, MessageCodec<std::vector<uint8_t>> {
+class NativeCryptoPlugin : public Plugin, MessageCodec<std::vector<uint8_t>> {
    public:
     static void RegisterWithRegistrar(PluginRegistrarWindows* registrar);
     void init(PluginRegistrarWindows* registrar);
 
-    CryptoPlugin();
-    ~CryptoPlugin();
+    NativeCryptoPlugin();
+    ~NativeCryptoPlugin();
 
    private:
     MethodChannel<EncodableValue>* channel;
