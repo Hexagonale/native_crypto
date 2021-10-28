@@ -23,11 +23,11 @@ class PluginConnection {
   }
 
   static Future<Uint8List?> process(int id) async {
-    final bool? success = await _channel.invokeMethod<bool>('process', id);
+    // final bool? success = await _channel.invokeMethod<bool>('process', id);
 
-    if (success != true) {
-      return null;
-    }
+    // if (success != true) {
+    // return null;
+    // }
 
     return _buffer;
   }
@@ -38,7 +38,7 @@ class PluginConnection {
 
   // Binary
   static Future<void> writeBuffer(Uint8List data) async {
-    await _dataChannel.send(data);
+    _buffer = await _dataChannel.send(data);
   }
 
   static Future<Uint8List> _onBinaryMessage(Uint8List? message) async {

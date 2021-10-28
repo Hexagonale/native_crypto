@@ -6,6 +6,10 @@
 
 #include <windows.h>
 
+#include <immintrin.h>
+
+#pragma warning(disable : 4324)
+
 #define BLOCK_SIZE 16
 #define AES_CBC_CIPHER_ERROR uint32_t
 
@@ -18,9 +22,11 @@ class AesCbcCipher {
     AES_CBC_CIPHER_ERROR process(uint8_t* data, uint32_t size);
 
    private:
+    inline __m128i aesEncrypt(__m128i block);
+
     bool ready = false;
     bool encrypt;
 
-    HCRYPTPROV hProv;
-    HCRYPTKEY hKey;
+    __m128i keySchedule[15];
+    __m128i block;
 };

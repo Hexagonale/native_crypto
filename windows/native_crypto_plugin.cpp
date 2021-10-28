@@ -50,16 +50,14 @@ void NativeCryptoPlugin::init(PluginRegistrarWindows* registrar) {
 
 // region Messages Handlers
 void NativeCryptoPlugin::HandleBinaryMessage(std::vector<uint8_t>* message, const MessageReply<std::vector<uint8_t>>& reply) {
-    const int size = message->size();
+    // delete this->buffer;
+    // this->buffer = new std::vector<uint8_t>(message->begin(), message->end());
 
-    delete this->buffer;
-    this->buffer = new std::vector<uint8_t>(size);
+    AesCbcCipher* cipher = this->ciphers.at(0);
+    cipher->process(message->data(), message->size());
+    reply(*message);
 
-    for (int i = 1; i < size; i++) {
-        (*this->buffer)[i] = (*message)[i];
-    }
-
-    reply(std::vector<uint8_t>());
+    // reply(std::vector<uint8_t>());
 }
 
 void NativeCryptoPlugin::HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue>& method_call, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {

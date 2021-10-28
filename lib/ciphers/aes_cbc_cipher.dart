@@ -164,6 +164,7 @@ class AesCbcCipher with Sink<Uint8List> {
   ///
   /// Pads data that's left in the [buffer], processes it and adds it to [_controller].
   Future<void> _finish() async {
+    // TODO: If buffer is empty attach whole padding block.
     final Uint8List data = BytesPadding.add(
       data: buffer,
       length: blockSize,
@@ -184,7 +185,8 @@ class AesCbcCipher with Sink<Uint8List> {
   Future<Uint8List> _processData(Uint8List data) async {
     await PluginConnection.writeBuffer(data);
 
-    final Uint8List? processed = await PluginConnection.process(_id!);
+    final Uint8List? processed = (await PluginConnection.process(_id!)) ?? Uint8List(0);
+
     if (processed == null) {
       throw CipherError('Cannot process data');
     }
